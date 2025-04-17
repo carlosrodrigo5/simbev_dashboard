@@ -575,4 +575,5 @@ template = pn.template.FastListTemplate(
     busy_indicator=None,
 )
 
+template.servable()
 template.show()
