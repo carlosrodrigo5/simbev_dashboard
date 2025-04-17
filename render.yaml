@@ -1,0 +1,7 @@
+services:
+  - type: web
+    name: bokeh-app
+    env: python
+    buildCommand: ""
+    startCommand: bokeh serve main.py --port $PORT --allow-websocket-origin=your-app-name.onrender.com
+    plan: free
