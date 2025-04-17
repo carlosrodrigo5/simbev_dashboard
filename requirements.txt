@@ -3,3 +3,7 @@ numpy
 panel
 hvplot
 holoviews
+boto3
+pandas
+fsspec
+s3fs
