@@ -3,5 +3,5 @@ services:
     name: bokeh-app
     env: python
     buildCommand: ""
-    startCommand: bokeh serve main.py --port $PORT --allow-websocket-origin=your-app-name.onrender.com
+    startCommand: bokeh serve main.py --port $PORT --allow-websocket-origin=simbev_dashboard.onrender.com
     plan: free
