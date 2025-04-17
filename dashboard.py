@@ -1,3 +1,5 @@
+import os
+
 import numpy as np
 from io import StringIO
 import panel as pn
@@ -5,21 +7,37 @@ import hvplot.pandas
 import pandas as pd
 import holoviews as hv
 from bokeh.models import HoverTool
+import boto3
 
 
 pn.extension("tabulator")
 hv.renderer("bokeh").theme = "light_minimal"
 
 
+s3 = boto3.client(
+    "s3",
+    region_name=os.environ["REGION"],
+    aws_access_key_id=os.environ["AWS_ACCESS_KEY_ID"],
+    aws_secret_access_key=os.environ["AWS_SECRET_ACCESS_KEY"],
+)
+
+
+def read_parquet_from_s3(path):
+    df = pd.read_parquet(path)
+    return df
+
+
+simbev_results = read_parquet_from_s3(
+    "s3://leitstelle-planen/02_Modelldaten/SimBEV/simbev_public_installed_charging_power_and_yearly_energy.parquet"
+)
+ss_analysis = read_parquet_from_s3(
+    "s3://leitstelle-planen/02_Modelldaten/SimBEV/simbev_sensitivity_analysis.parquet"
+)
+
+
 # data extraction
 def create_scenario_graphs():
-    def read_data():
-        file_path = "/Users/carlos.canales/projects/simbev/artifacts/simbev_public_installed_charging_power_and_yearly_energy.csv"
-        df = pd.read_csv(file_path)
-        return df
-
-    source_data = read_data()
-
+    source_data = simbev_results.copy()
     # Widgets
     scenario_selector = pn.widgets.Select(
         name="Szenario \n (nur für Tabelle)",
@@ -238,14 +256,7 @@ def create_scenario_graphs():
 
 
 def create_sensitivity_analysis_graph():
-    def read_data():
-        file_path = "/Users/carlos.canales/projects/simbev/artifacts/simbev_sensitivity_analysis.csv"
-        df = pd.read_csv(file_path)
-        return df
-
-    reference = pd.read_csv(
-        "/Users/carlos.canales/projects/simbev/artifacts/simbev_public_installed_charging_power_and_yearly_energy.csv"
-    )
+    reference = simbev_results.copy()
     reference = reference[
         (reference["scenario"] == "Referenzszenario") & (reference["year"] == 2030)
     ]
@@ -258,7 +269,7 @@ def create_sensitivity_analysis_graph():
     reference = pd.concat([reference, reference_1, reference_2], axis=0)
     reference["variable"] = "Referenzszenario 2030"
 
-    source_data = read_data()
+    source_data = ss_analysis.copy()
     source_data["parameter"] = source_data["case"].apply(lambda x: x.split("_")[0])
     source_data["variable"] = source_data["case"].apply(lambda x: x.split("_")[1])
 
@@ -482,7 +493,6 @@ main_area = pn.Column(mapping["Page1"], styles={"width": "100%"})
 #
 # button1.on_click(lambda event: show_page("Page1"))
 # button2.on_click(lambda event: show_page("Page2"))
-
 
 
 button1.on_click(lambda event: (main_area.clear(), main_area.append(mapping["Page1"])))
