@@ -8,6 +8,7 @@ import pandas as pd
 import holoviews as hv
 from bokeh.models import HoverTool
 import boto3
+import io
 
 
 pn.extension("tabulator")
@@ -19,11 +20,15 @@ s3 = boto3.client(
     region_name=os.environ.get("REGION"),
     aws_access_key_id=os.environ.get("AWS_ACCESS_KEY_ID"),
     aws_secret_access_key=os.environ.get("AWS_SECRET_ACCESS_KEY"),
+    aws_session_token=os.environ.get("AWS_SESSION_TOKEN"),
 )
 
 
 def read_parquet_from_s3(path):
-    df = pd.read_parquet(path)
+    bucket = path.split("/")[2]
+    key = "/".join(path.split("/")[3:])
+    obj = s3.get_object(Bucket=bucket, Key=key)
+    df = pd.read_parquet(io.BytesIO(obj["Body"].read()))
     return df
 
 
