@@ -462,46 +462,51 @@ button2 = pn.widgets.Button(
     styles={"width": "100%"},
 )
 
+dashboard1 = pn.Column(
+    pn.pane.Markdown("## Dashboard"),
+    create_scenario_graphs(),
+    sizing_mode="stretch_width",
+)
+
+dashboard2 = pn.Column(
+    pn.pane.Markdown("## Dashboard"),
+    create_sensitivity_analysis_graph(),
+    sizing_mode="stretch_width",
+)
+
+main_area = pn.Column(dashboard1, styles={"width": "100%"})
+
 
 def create_page1():
-    obj = create_scenario_graphs()
-    return pn.Column(
-        # pn.pane.Markdown("## Dataset Explorer"),
-        obj,
-        align="center",
-    )
+    global main_area
+    main_area.clear()
+    main_area.append(dashboard1)
 
 
 def create_page2():
-    obj = create_sensitivity_analysis_graph()
-    return pn.Column(
-        # pn.pane.Markdown("## Dataset Explorer"),
-        obj,
-        align="center",
-    )
+    global main_area
+    main_area.clear()
+    main_area.append(dashboard2)
+    # return obj
 
 
-mapping = {
-    "Page1": create_page1,
-    "Page2": create_page2,
-}
-
-global main_area
-main_area = pn.Column(mapping["Page1"], styles={"width": "100%"})
+# mapping = {
+#     "Page1": create_page1(),
+#     "Page2": create_page2(),
+# }
 
 
 # def show_page(page_key):
-#     global main_area
 #     main_area.clear()
 #     main_area.append(mapping[page_key])
 
+
+button1.on_click(lambda event: create_page1())
+button2.on_click(lambda event: create_page2())
+
 #
-# button1.on_click(lambda event: show_page("Page1"))
-# button2.on_click(lambda event: show_page("Page2"))
-
-
-button1.on_click(lambda event: (main_area.clear(), main_area.append(mapping["Page1"])))
-button2.on_click(lambda event: (main_area.clear(), main_area.append(mapping["Page2"])))
+# button1.on_click(lambda event: (main_area.clear(), main_area.append(mapping["Page1"])))
+# button2.on_click(lambda event: (main_area.clear(), main_area.append(mapping["Page2"])))
 
 button1.js_on_click(
     args={},
@@ -509,12 +514,12 @@ button1.js_on_click(
     window.location.reload();
 """,
 )
-button2.js_on_click(
-    args={},
-    code="""
-    window.location.reload();
-""",
-)
+# button2.js_on_click(
+#     args={},
+#     code="""
+#     window.location.reload();
+# """,
+# )
 
 #################### SIDEBAR LAYOUT ##########################
 sidebar = pn.Column(
@@ -576,4 +581,12 @@ template = pn.template.FastListTemplate(
 )
 
 template.servable()
-template.show()
+# template.show(
+#     title="SimBEV Dashboard",
+#     location="http://localhost:5006",
+#     # location="https://simbev-dashboard.carlosrodrigo5.workers.dev/",
+#     # location="https://simbev-dashboard.carlosrodrigo5.workers.dev/",
+#     # location="https://simbev-dashboard.carlosrodrigo5.workers.dev/",
+# )
+# template.show()
+# template.show()
