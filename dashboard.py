@@ -15,28 +15,28 @@ pn.extension("tabulator")
 hv.renderer("bokeh").theme = "light_minimal"
 
 
-s3 = boto3.client(
-    "s3",
-    region_name=os.environ.get("REGION"),
-    aws_access_key_id=os.environ.get("AWS_ACCESS_KEY_ID"),
-    aws_secret_access_key=os.environ.get("AWS_SECRET_ACCESS_KEY"),
-    aws_session_token=os.environ.get("AWS_SESSION_TOKEN"),
+# s3 = boto3.client(
+#     "s3",
+#     region_name=os.environ.get("REGION"),
+#     aws_access_key_id=os.environ.get("AWS_ACCESS_KEY_ID"),
+#     aws_secret_access_key=os.environ.get("AWS_SECRET_ACCESS_KEY"),
+#     aws_session_token=os.environ.get("AWS_SESSION_TOKEN"),
+# )
+#
+#
+# def read_parquet_from_s3(path):
+#     bucket = path.split("/")[2]
+#     key = "/".join(path.split("/")[3:])
+#     obj = s3.get_object(Bucket=bucket, Key=key)
+#     df = pd.read_parquet(io.BytesIO(obj["Body"].read()))
+#     return df
+
+
+simbev_results = pd.read_parquet(
+    "data/simbev_public_installed_charging_power_and_yearly_energy.parquet"
 )
-
-
-def read_parquet_from_s3(path):
-    bucket = path.split("/")[2]
-    key = "/".join(path.split("/")[3:])
-    obj = s3.get_object(Bucket=bucket, Key=key)
-    df = pd.read_parquet(io.BytesIO(obj["Body"].read()))
-    return df
-
-
-simbev_results = read_parquet_from_s3(
-    "s3://leitstelle-planen/02_Modelldaten/SimBEV/simbev_public_installed_charging_power_and_yearly_energy.parquet"
-)
-ss_analysis = read_parquet_from_s3(
-    "s3://leitstelle-planen/02_Modelldaten/SimBEV/simbev_sensitivity_analysis.parquet"
+ss_analysis = pd.read_parquet(
+    "data/simbev_sensitivity_analysis.parquet"
 )
 
 
