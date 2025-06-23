@@ -38,7 +38,6 @@ simbev_results = pd.read_parquet(
 ss_analysis = pd.read_parquet("data/simbev_sensitivity_analysis.parquet")
 
 
-# data extraction
 def create_scenario_graphs():
     # --------------- Functions -----------
     def filter_data_table(scenario, luc, unit):
@@ -143,19 +142,6 @@ def create_scenario_graphs():
     ).interactive()
 
     # --------------- Create Plots --------------
-
-    # fig = df_plot.hvplot.scatter(
-    #     x='year', y='value', by='scenario',
-    #     title=f'Unit: {unit_selector.value} - LUC: {luc_selector.value}',
-    #     legend='top_left',
-    #     tools=[hover],
-    #     responsive=True,
-    #     muted_alpha=0,
-    #     yformatter='%.0f'
-    # ).opts(legend_opts={"click_policy": "hide"})
-
-    # legend as a single row under the graph
-
     hover = HoverTool(
         tooltips=[
             ("Szenario", "@scenario"),
@@ -218,9 +204,7 @@ def create_scenario_graphs():
         # height=700,
     )
 
-    # line graph that join the scatter points
     fig = fig_line * fig_scatter
-
     fig = fig.opts(hooks=[modify_legend, sort_legend], show_grid=True, axiswise=True)
 
     # ------------------- Create Table --------------
@@ -273,31 +257,20 @@ def create_sensitivity_analysis_graph():
         return data.drop(columns=["color"])
 
     def filter_data_plot(parameter, luc, unit):
-        # if luc and len(luc) > 0:
-        #     data = data[data['LUC'] == luc]
-        # data =
         return source_data[
             (source_data["unit"] == unit)
             & (source_data["LUC"] == luc)
             & (source_data["parameter"] == parameter)
         ].set_index(["parameter"])
-        # fig = df_plot.hvplot.scatter(
-        #     x='year', y='value', by='scenario',
-        #     title=f'Unit: {unit_selector.value} - LUC: {luc_selector.value}',
-        #     legend='top_left',
-        #     tools=[hover],
-        #     responsive=True,
-        #     muted_alpha=0,
-        #     yformatter='%.0f'
-        # ).opts(legend_opts={"click_policy": "hide"})
+
     def get_filtered_file(parameter, luc, unit):
         df = filter_data_table(parameter, luc, unit)
         sio = StringIO()
         df.to_csv(sio)
         sio.seek(0)
         return sio
-    # update luc_selector options based on unit selection
 
+    # update luc_selector options based on unit selection
     def update_luc_selector(event):
         if event.new == "MW":
             luc_selector.options = list(
@@ -446,7 +419,7 @@ def create_sensitivity_analysis_graph():
     return dashboard
 
 
-############################# WIDGETS & CALLBACK ###########################################
+############################# CALLBACKS ####################################
 
 button1 = pn.widgets.Button(
     name="Szenarien",
@@ -473,6 +446,7 @@ dashboard2 = pn.Column(
     sizing_mode="stretch_width",
 )
 
+############################# MAIN AREA ####################################
 main_area = pn.Column(dashboard1, styles={"width": "100%"})
 
 
@@ -486,7 +460,6 @@ def create_page2():
     global main_area
     main_area.clear()
     main_area.append(dashboard2)
-    # return obj
 
 button1.on_click(lambda event: create_page1())
 button2.on_click(lambda event: create_page2())
@@ -506,6 +479,8 @@ sidebar = pn.Column(
     styles={"width": "100%", "padding": "15px"},
 )
 
+
+#################### TEMPLATE LAYOUT ##########################
 template = pn.template.FastListTemplate(
     title="SimBEV Ergebnisse",
     sidebar=[sidebar],
