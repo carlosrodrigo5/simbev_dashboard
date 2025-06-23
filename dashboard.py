@@ -52,21 +52,9 @@ def create_scenario_graphs():
         return data
 
     def filter_data_plot(luc, unit):
-        # if luc and len(luc) > 0:
-        #     data = data[data['LUC'] == luc]
-        # data =
         return source_data[
             (source_data["unit"] == unit) & (source_data["LUC"] == luc)
         ].set_index(["scenario", "year"])
-        # fig = df_plot.hvplot.scatter(
-        #     x='year', y='value', by='scenario',
-        #     title=f'Unit: {unit_selector.value} - LUC: {luc_selector.value}',
-        #     legend='top_left',
-        #     tools=[hover],
-        #     responsive=True,
-        #     muted_alpha=0,
-        #     yformatter='%.0f'
-        # ).opts(legend_opts={"click_policy": "hide"})
 
     def get_filtered_file(scenario, luc, unit):
         df = filter_data_table(scenario, luc, unit)
@@ -323,7 +311,7 @@ def create_sensitivity_analysis_graph():
     )
     unit_selector = pn.widgets.Select(
         name="Unit",
-        options=list(source_data["unit"].unique())[::-1],
+        options=list(source_data["unit"].unique()),
         height=80,
         sizing_mode="scale_width",
     )
