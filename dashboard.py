@@ -385,7 +385,7 @@ def create_sensitivity_analysis_graph():
     # ------------ Create Table --------------
     table = pn.widgets.Tabulator(df_table, name="table", sizing_mode="scale_both")
 
-    fd = pn.widgets.FileDownload( # FileDownload widget to download the filtered data
+    fd = pn.widgets.FileDownload(  # FileDownload widget to download the filtered data
         callback=pn.bind(
             get_filtered_file,
             parameter=parameter_selector,
@@ -461,6 +461,7 @@ def create_page2():
     main_area.clear()
     main_area.append(dashboard2)
 
+
 button1.on_click(lambda event: create_page1())
 button2.on_click(lambda event: create_page2())
 
@@ -492,4 +493,4 @@ template = pn.template.FastListTemplate(
 )
 
 template.servable()
-#template.show()
+# template.show()
