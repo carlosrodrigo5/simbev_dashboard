@@ -17,4 +17,9 @@ COPY data /simbev_dashboard/data
 EXPOSE 5006
 
 # Run panel app
-CMD ["panel", "serve", "dashboard.py", "--address", "0.0.0.0", "--port", "5006", "--allow-websocket-origin", "*"]
+CMD ["panel", "serve", "dashboard.py",
+     "--address", "0.0.0.0",
+     "--port", "5006",
+     "--allow-websocket-origin", "*",
+     "--session-token-expiration", "300000"]
+
